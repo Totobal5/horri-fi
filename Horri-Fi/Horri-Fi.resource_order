@@ -1,0 +1,13 @@
+{
+  "FolderOrderSettings": [],
+  "ResourceOrderSettings": [
+    {"name":"fnt_game","order":2,"path":"fonts/fnt_game/fnt_game.yy",},
+    {"name":"obj_horrifi","order":1,"path":"objects/obj_horrifi/obj_horrifi.yy",},
+    {"name":"shd_horrifi","order":3,"path":"shaders/shd_horrifi/shd_horrifi.yy",},
+    {"name":"obj_control","order":1,"path":"objects/obj_control/obj_control.yy",},
+    {"name":"Thanks","order":2,"path":"notes/Thanks/Thanks.yy",},
+    {"name":"lib_horrifi","order":2,"path":"scripts/lib_horrifi/lib_horrifi.yy",},
+    {"name":"Setup","order":1,"path":"notes/Setup/Setup.yy",},
+    {"name":"rm_horrifi","order":3,"path":"rooms/rm_horrifi/rm_horrifi.yy",},
+  ],
+}

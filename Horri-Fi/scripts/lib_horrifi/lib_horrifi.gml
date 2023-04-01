@@ -78,12 +78,13 @@ global.__horriFi =
 	
 		render : function()
 		{
+			if ( !enabled ) exit;
+			
 			var _w, _h, _s;
 			_s = surface_get_texture(application_surface);
 			_w = texture_get_texel_width(_s);
 			_h = texture_get_texel_height(_s);
-			
-			if ( !enabled ) exit;
+		
 			// Set shader
 			shader_set(shd_horrifi);
 		
@@ -117,6 +118,60 @@ global.__horriFi =
 		reset : function()
 		{
 			if ( enabled ) shader_reset();
+		},
+		
+		/// @desc Export current configuration to a json string
+		export: function()
+		{
+			// Feather ignore GM1041
+			var _this = self;
+			var _keys = variable_struct_get_names(_this);
+			// Convert to JSON
+			var _export = {__horrifi: true, enabled: _this.enabled, time: _this.time};
+			
+			with (_export) {
+				var i=0; repeat( array_length( _keys ) ) {
+					var _key   = _keys[i];
+					var _param = _this[$ _key];
+					if (is_struct(_param) ) {
+						var _set = {};
+						var _paramKeys = variable_struct_get_names( _param );
+						var j=0; repeat(array_length(_paramKeys) ) {
+							var _paramKey = _paramKeys[i];
+							var _paramVal = _param[$ _paramKey];
+							
+							_set[$ _paramKey] = _paramVal;
+							j++;
+						}
+						
+						_export[$ _key] = _set;
+					}
+					
+					i++;
+				}
+			}
+			
+			return ( json_stringify(_export) );
+		},
+		
+		/// @desc Import the values of a json string
+		import: function(_horrifiJSON)
+		{
+			var _import = json_parse(_horrifiJSON);
+			if ( !variable_struct_exists(_import, "__horrifi") ) exit;
+			
+			enabled = _import.enabled;
+			time    = _import.time;
+			
+			var _keys = variable_struct_get_names(_import);
+			var i=0; repeat( array_length( _keys ) ) {
+				var _key   = _keys[i];
+				var _param = _import[$ _key];
+				
+				self[$ _key] = _param;
+
+				i++;
+			}
 		}
 		
 	#endregion
@@ -134,12 +189,25 @@ function horrifi_is_enabled()
 }	
 function horrifi_set()
 {
-	global.__horriFi.render();	
+	global.__horriFi.render();
 }
 function horrifi_reset()
 {	
 	global.__horriFi.reset();
 }
+
+/// @desc Export current configuration to a json string
+function horrifi_export() 
+{
+	return ( global.__horriFi.export() );
+}
+
+/// @desc Import the values of a json string
+function horrifi_import(_json)
+{
+	return ( global.__horriFi.import(_json) );
+}
+
 
 // Bloom functions
 function horrifi_bloom_enable(onoff)

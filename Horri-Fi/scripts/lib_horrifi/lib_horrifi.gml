@@ -1,165 +1,159 @@
-global.__horriFi = 
+/// @ignore
+function __horriFi() 
 {
-	#region Main System
+	static enabled = true;
+	static time    = 0;
 	
-		enabled		: true,
-		time		: 0,
-		
-	#endregion
-	#region Parameter Structs
-		// Vignette settings
-		vignette :
-		{
-			enabled : false,
-			strength : .25,
-			intensity : .5
-		},
-		
-		// Noise settings
-		noise :
-		{
-			enabled : false,
-			strength : .1
-		},
-		
-		// Chromatic abberation settings
-		chromatic_abberation : 
-		{
-			enabled : false,
-			strength : .3
-		},
-		
-		// Bloom
-		bloom : 
-		{
-			enabled : false,
-			radius : 8,
-			intensity : 1,
-			threshold : 0.8
-		},
+	// Vignette settings
+	static vignette =
+	{
+		enabled  : false,
+		strength : .25,
+		intensity: .5
+	};
 	
-		// VHS Distortion
-		vhs :
-		{
-			enabled : false,
-			strength : .5
-		},
+	// Noise settings
+	static noise =
+	{
+		enabled : false,
+		strength: .1
+	};
 	
-		// Scanlines
-		scanlines : 
-		{
-			enabled : false,
-			strength : .25
-		},
+	// Chromatic abberation settings
+	static chromatic_abberation =
+	{
+		enabled : false,
+		strength: .3
+	};
+	
+	// Bloom
+	static bloom =
+	{
+		enabled   : false,
+		radius    : 8,
+		intensity : 1,
+		threshold : 0.8
+	};
+	
+	// VHS Distortion
+	static vhs =
+	{
+		enabled  : false,
+		strength : .5
+	};
+	
+	// Scanlines
+	static scanlines =
+	{
+		enabled : false,
+		strength: .25
+	};
 		
-		// CRT Curve
-		crt :
-		{
-			enabled : false,
-			curve : 2
-		},
-	#endregion
-	#region Shader Uniforms
+	// CRT Curve
+	static crt =
+	{
+		enabled : false,
+		curve : 2
+	};
 	
-		uniEnable	: shader_get_uniform(shd_horrifi, "enable"),
-		uniTime		: shader_get_uniform(shd_horrifi, "time"),
-		uniSeed		: shader_get_uniform(shd_horrifi, "seed"),
-		uniTexel	: shader_get_uniform(shd_horrifi, "texel"),
-		uniVig		: shader_get_uniform(shd_horrifi, "vignette"),
-		uniNstr		: shader_get_uniform(shd_horrifi, "noise_strength"),
-		uniChab		: shader_get_uniform(shd_horrifi, "chab_intensity"),
-		uniBloom	: shader_get_uniform(shd_horrifi, "bloom"),
-		uniScanStr	: shader_get_uniform(shd_horrifi, "scan_strength"),
-		uniVhs		: shader_get_uniform(shd_horrifi, "vhs_strength"),
-		uniCurve	: shader_get_uniform(shd_horrifi, "curve"),
-		
-	#endregion
-	#region Functions
+	static uniEnable  = shader_get_uniform(shd_horrifi, "enable");
+	static uniTime    = shader_get_uniform(shd_horrifi, "time");
+	static uniSeed    = shader_get_uniform(shd_horrifi, "seed");
+	static uniTexel   = shader_get_uniform(shd_horrifi, "texel");
+	static uniVig     = shader_get_uniform(shd_horrifi, "vignette");
+	static uniNstr    = shader_get_uniform(shd_horrifi, "noise_strength");
+	static uniChab    = shader_get_uniform(shd_horrifi, "chab_intensity");
+	static uniBloom   = shader_get_uniform(shd_horrifi, "bloom");
+	static uniScanStr = shader_get_uniform(shd_horrifi, "scan_strength");
+	static uniVhs     = shader_get_uniform(shd_horrifi, "vhs_strength");
+	static uniCurve   = shader_get_uniform(shd_horrifi, "curve");
 	
-		render : function()
-		{
-			if ( !enabled ) exit;
+	static render = function()
+	{
+		if ( !enabled ) exit;
 			
-			var _w, _h, _s;
-			_s = surface_get_texture(application_surface);
-			_w = texture_get_texel_width(_s);
-			_h = texture_get_texel_height(_s);
+		var _w, _h, _s;
+		_s = surface_get_texture(application_surface);
+		_w = texture_get_texel_width(_s);
+		_h = texture_get_texel_height(_s);
 		
-			// Set shader
-			shader_set(shd_horrifi);
+		// Set shader
+		shader_set(shd_horrifi);
 		
-			// Enable effects
-			shader_set_uniform_f_array( uniEnable, 
-				[ 
-					bloom.enabled, 
-					chromatic_abberation.enabled, 
-					noise.enabled, 
-					vignette.enabled,
-					scanlines.enabled,
-					vhs.enabled,
-					crt.enabled
-				]
-			);
+		// Enable effects
+		shader_set_uniform_f_array( uniEnable, 
+			[ 
+				bloom.enabled, 
+				chromatic_abberation.enabled, 
+				noise.enabled, 
+				vignette.enabled,
+				scanlines.enabled,
+				vhs.enabled,
+				crt.enabled
+			]
+		);
 		
-			// Set effects parameters
-			shader_set_uniform_f(uniTexel, _w, _h);
-			shader_set_uniform_f(uniTime, time++);
-			shader_set_uniform_f(uniSeed, 1+random(100));
-			shader_set_uniform_f(uniVig, vignette.intensity, vignette.strength);
-			shader_set_uniform_f(uniNstr, noise.strength);
-			shader_set_uniform_f(uniChab, chromatic_abberation.strength);
-			shader_set_uniform_f(uniBloom, bloom.radius, bloom.intensity, bloom.threshold);
-			shader_set_uniform_f(uniScanStr, scanlines.strength);
-			shader_set_uniform_f(uniVhs, vhs.strength);
-			shader_set_uniform_f(uniCurve, crt.curve, crt.curve);
-		},
+		// Set effects parameters
+		shader_set_uniform_f(uniTexel, _w, _h);
+		shader_set_uniform_f(uniTime, time++);
+		shader_set_uniform_f(uniSeed, 1+random(100));
+		shader_set_uniform_f(uniVig, vignette.intensity, vignette.strength);
+		shader_set_uniform_f(uniNstr, noise.strength);
+		shader_set_uniform_f(uniChab, chromatic_abberation.strength);
+		shader_set_uniform_f(uniBloom, bloom.radius, bloom.intensity, bloom.threshold);
+		shader_set_uniform_f(uniScanStr, scanlines.strength);
+		shader_set_uniform_f(uniVhs, vhs.strength);
+		shader_set_uniform_f(uniCurve, crt.curve, crt.curve);
+	}
+	
+	// Resetting
+	static reset = function()
+	{
+		if ( enabled ) shader_reset();
+	}
 		
-		// Resetting
-		reset : function()
-		{
-			if ( enabled ) shader_reset();
-		},
-		
-		/// @desc Export current configuration to a json string
-		export: function()
-		{
-			// Feather ignore GM1041
-			var _this = self;
-			var _keys = variable_struct_get_names(_this);
-			// Convert to JSON
-			var _export = {__horrifi: true, enabled: _this.enabled, time: _this.time};
+	/// @desc Export current configuration to a json string
+	static export = function()
+	{
+		static this = static_get(__horriFi);
+		// Feather ignore GM1041
+		var _this = this;
+		var _keys = variable_struct_get_names(_this);
+		// Convert to JSON
+		var _export = {__horrifi: true, enabled: _this.enabled, time: _this.time};
 			
-			with (_export) {
-				var i=0; repeat( array_length( _keys ) ) {
-					var _key   = _keys[i];
-					var _param = _this[$ _key];
-					if (is_struct(_param) ) {
-						var _set = {};
-						var _paramKeys = variable_struct_get_names( _param );
-						var j=0; repeat(array_length(_paramKeys) ) {
-							var _paramKey = _paramKeys[i];
-							var _paramVal = _param[$ _paramKey];
+		with (_export) {
+			var i=0; repeat( array_length( _keys ) ) {
+				var _key   = _keys[i];
+				var _param = _this[$ _key];
+				if (!is_callable(_param) && is_struct(_param) ) {
+					var _set = {};
+					var _paramKeys = variable_struct_get_names( _param );
+					var j=0; repeat(array_length(_paramKeys) ) {
+						var _paramKey = _paramKeys[j];
+						var _paramVal = _param[$ _paramKey];
 							
-							_set[$ _paramKey] = _paramVal;
-							j++;
-						}
-						
-						_export[$ _key] = _set;
+						_set[$ _paramKey] = _paramVal;
+						j++;
 					}
-					
-					i++;
+						
+					_export[$ _key] = _set;
 				}
+					
+				i++;
 			}
+		}
 			
-			return ( json_stringify(_export) );
-		},
+		return ( json_stringify(_export) );
+	}
 		
-		/// @desc Import the values of a json string
-		import: function(_horrifiJSON)
-		{
-			var _import = json_parse(_horrifiJSON);
-			if ( !variable_struct_exists(_import, "__horrifi") ) exit;
-			
+	/// @desc Import the values of a json string
+	static import = function(_horrifiJSON)
+	{
+		static this = static_get(__horriFi);
+		var _import = json_parse(_horrifiJSON);
+		if ( !variable_struct_exists(_import, "__horrifi") ) exit;
+		with (this) {
 			enabled = _import.enabled;
 			time    = _import.time;
 			
@@ -173,39 +167,43 @@ global.__horriFi =
 				i++;
 			}
 		}
-		
-	#endregion
+	}
+	
 }
+
+// start statics
+__horriFi();
 
 // Main functions
 function horrifi_enable(onoff)
 {
 	///@func horrifi_enable(enable)
-	global.__horriFi.enabled = onoff;
+	__horriFi.enabled = onoff;
 }
 function horrifi_is_enabled()
 {
-	return global.__horriFi.enabled;
+	return __horriFi.enabled;
 }	
 function horrifi_set()
 {
-	global.__horriFi.render();
+	__horriFi.render();
 }
 function horrifi_reset()
 {	
-	global.__horriFi.reset();
+	__horriFi.reset();
 }
 
 /// @desc Export current configuration to a json string
 function horrifi_export() 
 {
-	return ( global.__horriFi.export() );
+	return ( __horriFi.export() );
 }
 
 /// @desc Import the values of a json string
+/// @param {string} horrifiJSON 
 function horrifi_import(_json)
 {
-	return ( global.__horriFi.import(_json) );
+	return ( __horriFi.import(_json) );
 }
 
 
@@ -213,38 +211,38 @@ function horrifi_import(_json)
 function horrifi_bloom_enable(onoff)
 {
 	///@func horrifi_bloom_enable(enable)
-	global.__horriFi.bloom.enabled = onoff;
+	__horriFi.bloom.enabled = onoff;
 }
 function horrifi_bloom_radius(rad)
 {
 	///@func horrifi_bloom_radius(radius)
-	global.__horriFi.bloom.radius = rad;
+	__horriFi.bloom.radius = rad;
 }
 function horrifi_bloom_intensity(int)
 {
 	///@func horrifi_bloom_intensity(intensity)
-	global.__horriFi.bloom.intensity = int;
+	__horriFi.bloom.intensity = int;
 }	
 function horrifi_bloom_threshold(thresh)
 {
 	///@func horrifi_bloom_threshold(threshold)
-	global.__horriFi.bloom.threshold = thresh;
+	__horriFi.bloom.threshold = thresh;
 }
 function horrifi_bloom_is_enabled()
 {
-	return global.__horriFi.bloom.enabled;	
+	return __horriFi.bloom.enabled;	
 }
 function horrifi_bloom_get_radius()
 {
-	return global.__horriFi.bloom.radius;	
+	return __horriFi.bloom.radius;	
 }
 function horrifi_bloom_get_intensity()
 {
-	return global.__horriFi.bloom.intensity;	
+	return __horriFi.bloom.intensity;	
 }
 function horrifi_bloom_get_threshold()
 {
-	return global.__horriFi.bloom.threshold;	
+	return __horriFi.bloom.threshold;	
 }
 function horrifi_bloom_set(e,r,i,t)
 {
@@ -259,20 +257,20 @@ function horrifi_bloom_set(e,r,i,t)
 function horrifi_chromaticab_enable(onoff)
 {
 	///@func horrifi_chromaticab_enable(enable)
-	global.__horriFi.chromatic_abberation.enabled = onoff;
+	__horriFi.chromatic_abberation.enabled = onoff;
 }	
 function horrifi_chromaticab_strength(str)
 {
 	///@func horrifi_chromaticab_strength(strength)
-	global.__horriFi.chromatic_abberation.strength = str;
+	__horriFi.chromatic_abberation.strength = str;
 }
 function horrifi_chromaticab_is_enabled()
 {
-	return global.__horriFi.chromatic_abberation.enabled;
+	return __horriFi.chromatic_abberation.enabled;
 }
 function horrifi_chromaticab_get_strength()
 {
-	return global.__horriFi.chromatic_abberation.strength;	
+	return __horriFi.chromatic_abberation.strength;	
 }
 function horrifi_chromaticab_set(e,s)
 {
@@ -285,20 +283,20 @@ function horrifi_chromaticab_set(e,s)
 function horrifi_noise_enable(onoff)
 {
 	///@func horrifi_noise_enable(enable)
-	global.__horriFi.noise.enabled = onoff;
+	__horriFi.noise.enabled = onoff;
 }	
 function horrifi_noise_strength(str)
 {
 	///@func horrifi_noise_strength(strength)
-	global.__horriFi.noise.strength = str;
+	__horriFi.noise.strength = str;
 }
 function horrifi_noise_is_enabled()
 {
-	return global.__horriFi.noise.enabled;
+	return __horriFi.noise.enabled;
 }
 function horrifi_noise_get_strength()
 {	
-	return global.__horriFi.noise.strength;
+	return __horriFi.noise.strength;
 }
 function horrifi_noise_set(e, s)
 {
@@ -311,29 +309,29 @@ function horrifi_noise_set(e, s)
 function horrifi_vignette_enable(onoff)		
 {
 	///@func horrifi_vignette_enable(enable)	
-	global.__horriFi.vignette.enabled=onoff
+	__horriFi.vignette.enabled=onoff
 }
 function horrifi_vignette_strength(str)		
 {
 	///@func horrifi_vignette_strength(strength)	
-	global.__horriFi.vignette.strength = str;
+	__horriFi.vignette.strength = str;
 }
 function horrifi_vignette_intensity(int)	
 {
 	///@func horrifi_vignette_intensity(intensity)
-	global.__horriFi.vignette.intensity = int;
+	__horriFi.vignette.intensity = int;
 }
 function horrifi_vignette_is_enabled()		
 {
-	return global.__horriFi.vignette.enabled;
+	return __horriFi.vignette.enabled;
 }
 function horrifi_vignette_get_strength()	
 {
-	return global.__horriFi.vignette.strength;
+	return __horriFi.vignette.strength;
 }
 function horrifi_vignette_get_intensity()	
 {
-	return global.__horriFi.vignette.intensity;
+	return __horriFi.vignette.intensity;
 }
 function horrifi_vignette_set(e,s,i)
 {
@@ -347,20 +345,20 @@ function horrifi_vignette_set(e,s,i)
 function horrifi_vhs_enable(onoff)
 {
 	///@func horrifi_vhs_enable(enable)
-	global.__horriFi.vhs.enabled = onoff;
+	__horriFi.vhs.enabled = onoff;
 }	
 function horrifi_vhs_strength(str)
 {
 	///@func horrifi_vhs_strength(strength)
-	global.__horriFi.vhs.strength = str;
+	__horriFi.vhs.strength = str;
 }
 function horrifi_vhs_is_enabled()
 {
-	return global.__horriFi.vhs.enabled;	
+	return __horriFi.vhs.enabled;	
 }
 function horrifi_vhs_get_strength()
 {
-	return global.__horriFi.vhs.strength;	
+	return __horriFi.vhs.strength;	
 }
 function horrifi_vhs_set(e,s)
 {
@@ -373,20 +371,20 @@ function horrifi_vhs_set(e,s)
 function horrifi_scanlines_enable(onoff)
 {
 	///@func horrifi_scanlines_enable(enable)
-	global.__horriFi.scanlines.enabled = onoff;
+	__horriFi.scanlines.enabled = onoff;
 }	
 function horrifi_scanlines_strength(str)
 {
 	///@func horrifi_scanlines_strength(strength)
-	global.__horriFi.scanlines.strength = str;
+	__horriFi.scanlines.strength = str;
 }
 function horrifi_scanlines_is_enabled()
 {
-	return global.__horriFi.scanlines.enabled;	
+	return __horriFi.scanlines.enabled;	
 }
 function horrifi_scanlines_get_strength()
 {
-	return global.__horriFi.scanlines.strength;	
+	return __horriFi.scanlines.strength;	
 }
 function horrifi_scanlines_set(e,s)
 {
@@ -399,20 +397,20 @@ function horrifi_scanlines_set(e,s)
 function horrifi_crt_enable(onoff)
 {
 	///@func horrifi_crt_enable(enable)
-	global.__horriFi.crt.enabled = onoff;
+	__horriFi.crt.enabled = onoff;
 }	
 function horrifi_crt_curve(str1)
 {
 	///@func horrifi_crt_curve(strength)
-	global.__horriFi.crt.curve = str1;
+	__horriFi.crt.curve = str1;
 }
 function horrifi_crt_is_enabled()
 {
-	return global.__horriFi.crt.enabled;	
+	return __horriFi.crt.enabled;	
 }
 function horrifi_crt_get_curve()
 {
-	return global.__horriFi.crt.curve;	
+	return __horriFi.crt.curve;	
 }
 function horrifi_crt_set(e,s1)
 {

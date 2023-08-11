@@ -8,52 +8,52 @@ function __horriFi()
 	static vignette =
 	{
 		enabled  : false,
-		strength : .25,
-		intensity: .5
+		strength : 0, //.25,
+		intensity: 0, //.5
 	};
 	
 	// Noise settings
 	static noise =
 	{
 		enabled : false,
-		strength: .1
+		strength: 0, // 0.1
 	};
 	
 	// Chromatic abberation settings
 	static chromatic_abberation =
 	{
 		enabled : false,
-		strength: .3
+		strength: 0 // .3
 	};
 	
 	// Bloom
 	static bloom =
 	{
 		enabled   : false,
-		radius    : 8,
-		intensity : 1,
-		threshold : 0.8
+		radius    : 0, // 8
+		intensity : 0, // 1
+		threshold : 0  // 0.8
 	};
 	
 	// VHS Distortion
 	static vhs =
 	{
 		enabled  : false,
-		strength : .5
+		strength : 0 // .5
 	};
 	
 	// Scanlines
 	static scanlines =
 	{
 		enabled : false,
-		strength: .25
+		strength: 0 //.25
 	};
 		
 	// CRT Curve
 	static crt =
 	{
 		enabled : false,
-		curve : 2
+		curve : 0 // 2
 	};
 	
 	static uniEnable  = shader_get_uniform(shd_horrifi, "enable");
@@ -68,6 +68,7 @@ function __horriFi()
 	static uniVhs     = shader_get_uniform(shd_horrifi, "vhs_strength");
 	static uniCurve   = shader_get_uniform(shd_horrifi, "curve");
 	
+	/// @desc Render horriFi
 	static render = function()
 	{
 		if ( !enabled ) exit;
@@ -106,7 +107,7 @@ function __horriFi()
 		shader_set_uniform_f(uniCurve, crt.curve, crt.curve);
 	}
 	
-	// Resetting
+	/// @desc Resetting
 	static reset = function()
 	{
 		if ( enabled ) shader_reset();
@@ -120,38 +121,29 @@ function __horriFi()
 		var _this = this;
 		var _keys = variable_struct_get_names(_this);
 		// Convert to JSON
-		var _export = {__horrifi: true, enabled: _this.enabled, time: _this.time};
+		var _export = {
+			__horrifi: true, 
+			enabled: _this.enabled, 
+			time:    _this.time,
 			
-		with (_export) {
-			var i=0; repeat( array_length( _keys ) ) {
-				var _key   = _keys[i];
-				var _param = _this[$ _key];
-				if (!is_callable(_param) && is_struct(_param) ) {
-					var _set = {};
-					var _paramKeys = variable_struct_get_names( _param );
-					var j=0; repeat(array_length(_paramKeys) ) {
-						var _paramKey = _paramKeys[j];
-						var _paramVal = _param[$ _paramKey];
-							
-						_set[$ _paramKey] = _paramVal;
-						j++;
-					}
-						
-					_export[$ _key] = _set;
-				}
-					
-				i++;
-			}
-		}
+			vignette:  _this.vignette,
+			noise:     _this.noise,
+			bloom:     _this.bloom,
+			vhs:       _this.vhs,
+			scanlines: _this.scanlines,
+			crt:       _this.crt,
 			
-		return ( json_stringify(_export) );
+			chromatic_abberation: _this.chromatic_abberation,
+		};
+		
+		return (json_stringify(_export) );
 	}
 		
 	/// @desc Import the values of a json string
 	static import = function(_horrifiJSON)
 	{
 		static this = static_get(__horriFi);
-		var _import = json_parse(_horrifiJSON);
+		var _import = (!is_struct(_horrifiJSON) ) ? json_parse(_horrifiJSON) : _horrifiJSON;
 		if ( !variable_struct_exists(_import, "__horrifi") ) exit;
 		with (this) {
 			enabled = _import.enabled;
